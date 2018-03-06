@@ -25,6 +25,64 @@ p {
 
 }
 
+.containerDiv {
+    position: relative;
+    text-align: center;
+}
+
+
+/* Bottom right text */
+.bottom-right {
+    position: absolute;
+    right: 16px;
+}
+
+.image
+{
+  max-width: 600px;
+}
+
+
+
+.subtitle
+{
+  font-size: 25px;
+  font-weight: bold
+}
+
+img.medium {
+    width: 40%;
+    height: auto;
+}
+
+img.right {
+    float: right;
+    margin: 10px;
+    margin-left: 20px;
+}
+
+.imagedesc
+{
+  margin-top: 0px;
+    font-size: 15px;
+    font-weight: bold;
+    font-style: italic;
+    text-align: right;
+}
+
+.imagedescL
+{
+  margin-top: 0px;
+    font-size: 15px;
+    font-weight: bold;
+    font-style: italic;
+    text-align: left;
+}
+
+.justifyText{
+text-align : justify;
+}
+
 .btn-primary {
   padding: 8px 20px;
   background: #fff;

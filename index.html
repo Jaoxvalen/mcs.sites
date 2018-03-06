@@ -60,7 +60,7 @@
 
 
                         <i class="fa fa-github-square"></i>
-                        <a href="https://docs.google.com/presentation/d/1OzwOPqfGKlGzLr7ivuhjZxJapNrSUFYZeAFMMINMR28/edit?usp=sharing">
+                        <a href="https://github.com/Jaoxvalen/joao-pinheiro-graficos-2017-2/tree/master/final%20projet">
                          ir al repositorio github
                         </a>
                       </p>
@@ -85,7 +85,7 @@
                       <div class="media accordion-inner">
                         <!--Todo: remplazar la ruta de los slides-->
                         <div class="media accordion-inner">
-                          <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vRkszduPF5lkxH-nxrH-90OeaBIYhb43yAkpb8FzqZaYUDyeNE73k5FZjAedGgEJvYRfYQlNsXrQlM8/embed?start=false&loop=false&delayms=3000" frameborder="0" width="480" height="299" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+                         <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vRDXuMYf1GUML6UeunhEBtESrIA8BkLk4ia0ooJ1UeNmcBLiP6LChJtEMXMWBz58gSP2sn2rPm81u_6/embed?start=false&loop=false&delayms=3000" frameborder="0" width="480" height="299" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
                         </div>
                         <div class="media-body">
                           <a href="https://docs.google.com/presentation/d/1OzwOPqfGKlGzLr7ivuhjZxJapNrSUFYZeAFMMINMR28/edit?usp=sharing">
@@ -112,14 +112,238 @@
     <!--/#about-->
 
 
-    <section id="features">
+    <section id="introduccion">
     <div class="container">
       <div class="row">
         <div class="center">
-          <div class="col-md-6 col-md-offset-3">
-            <h2>Detalles de implementación</h2>
+          <div class="col-md-12">
+            <h2>Introducción</h2>
             <hr>
-            <p class="lead">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut</p>
+            <p class="lead justifyText">
+            El cálculo de transparencia independiente del orden, es un tema muy investigado y como lo plantean en el trabajo de <b>Maule, M. “Hybrid Transparency”</b>, el gran problema hasta la fecha es el alto costo de memoria necesaria para llevar a cabo una técnica con este enfoque, generalmente ocurre un truncamiento que depende del tamaño de la profundidad, con la que es representada la escena.
+            <br>
+            Este informe describe la implementación y resultados de la implementación de la técnica de transparencia híbrida para el cálculo de blending independiente del orden, presentada en el  paper  <b>“Hybrid Transparency”, Maule, M. (2013)</b>, para el proyecto final en el curso de computación gráfica de maestría en ciencias de la computación UCSP. 
+            <br>
+            A lo largo del reporte se describe el detalle de implementación, y los resultados alcanzados.
+
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+
+    <section id="detallesimp">
+    <div class="container">
+      <div class="row">
+        <div class="center">
+          <div class="col-md-12">
+            <h2>Detalles de Implementación</h2>
+            <hr>
+            <div class="justifyText">
+
+
+              <p class="lead">
+              La transparencia híbrida, consiste en resolver de forma precisa el blending de los k fragmentos más cercanos al ojo del espectador y el resto de fragmentos se resuelve usando técnicas poco precisas que no requieren gran cálculo debido a que la hipótesis presentada en el paper, es que los fragmentos más alejados tienen una contribución insignificante en la composición final y no requieren precisión.
+              <br>
+              Para lograr esto he usado dos texturas tridimensionales la primera almacena la profundidad y el componente alpha del color de los k fragmentos, a esta textura la denominaré textura-Z  (figura 1) y la segunda sus visibilidades, textura-V.
+              </p>
+
+
+             <div class="row">
+                 <div class="col-md-6 col-md-offset-6">
+                     <div class="image center">
+                      <img src="images/method/texture_z.png" class="img-responsive">
+                    </div>
+                </div>
+                <p class="imagedesc"> Figura 1. Representación de textura para almacenar la profundidad y componente alpha del color.</p>
+              </div>
+
+
+
+
+              <p class="lead">
+                Cada texel de la textura almacena 32 bits de información, como se plantea en el paper de referencia he usado 8 bits para el componente alpha y 24 bits restantes para almacenar la profundidad de cada fragment.El algoritmo consiste en 5 pasadas que se describe a continuación:
+              </p>
+
+              <p class="subtitle">
+                1. Limpieza de textura:
+              </p>
+
+              <p class="lead">
+                 Limpia la textura, de forma granulada, para este paso a diferencia de la implementación del paper se ha utilizado la llamada a una función kernel de CUDA que setea cada slot de la textura-Z con el valor más alto posible para enteros sin signo (infinito).
+              </p>
+
+
+              <div class="row">
+                 <div class="col-md-6">
+                     <div class="image center">
+                      <img src="images/method/clear.jpg" class="img-responsive">
+                    </div>
+                </div>
+                <div class="col-md-12">
+                  <p class="imagedescL"> Figura 2. Limpieza de textura Z, cada thread del cuda kernel asigna un valor infinito al texel relacionado a su propio índice.</p>
+                </div>
+              </div>
+
+
+
+               <p class="subtitle">
+                 2. Almacenamiento:
+              </p>
+
+              <p class="lead">
+              Esta etapa consiste en una pasada de geometría, en la cual se renderiza desde la posición del espectador, y se inserta la información de alpha de forma ordenada con respecto a la profundidad del fragment en la textura-Z, para ello se ha utilizado un shader y la función imageAtomicMin que almacena el mínimo valor y extrae el valor anterior, esto resulta en una inserción ordenada de los valores. finalmente se obtiene una textura-Z con las K profundidades y valores alphas más cercanas ordenadas.
+              </p>
+
+              <div class="row">
+                   <div class="col-md-4">
+                     <div class="image center">
+                      <img src="images/method/store_depth_test.jpg" class="img-responsive">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                  
+                    <div class="image center">
+                      <img src="images/method/store_insert.jpg" class="img-responsive">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="image center">
+                      <img src="images/method/n_depth_test_insert.jpg" class="img-responsive">
+                    </div>
+                </div>
+              </div>
+             
+              
+              <p class="imagedesc"> figura 3. depth test para la etapa de almacenamiento, primero realiza un depth test entre el nuevo valor de profundidad y la primera capa, si pasa el test se intercambian los valores y se repite el test a lo largo del buffer, finalizando con un buffer ordenado en profundidad.</p>
+              
+               <p class="subtitle">
+                 3. Procesamiento:
+              </p>
+
+              <p class="lead">
+              Para esta etapa se recurrió al paralelismo de un cuda kernel, y básicamente la tarea es calcular las visibilidades en base a la textura-Z. Se desempaqueta la información alpha, y se usa la fórmula de visibilidades para el cálculo de la composición de los k fragments del pixel presentada en el paper. Algo relevante a mencionar es la dificultad de granular la paralelización durante esta etapa, hasta ahora solo se ha conseguido calcular las visibilidades con una estructura bidimensional de threads cuda, debido a la dependencia correlativa entre los valores, es decir que el valor de visibilidad de la capa n depende del cálculo de visibilidad de la capa n-1 como se observa en la figura 4.
+
+              </p>
+
+               <div class="row">
+                 <div class="col-md-6 col-md-offset-6">
+                     <div class="image center">
+                      <img src="images/method/process.png" class="img-responsive">
+                    </div>
+                </div>
+                <p class="imagedesc"> Figura 4. Cada cuda thread perteneciente a una estructura bidimensional del tamaño de la imagen  final, calcula las K visibilidades del núcleo.</p>
+              </div>
+
+
+              <p class="subtitle">
+                 4. Renderizado:
+              </p>
+
+              <p class="lead">
+               Este corresponde a otro pase de geometría, la principal tarea en esta etapa es identificar los fragmentos que desbordan del núcleo, y por ende pasan a ser parte de la cola, además de calcular la composición final del núcleo y de la cola.  para esto he reutilizado un módulo implementado por los autores para renderizar a tres texturas bidimensionales, la primera almacena la composición de la cola con una función de blending de sumatoria, la segunda textura almacena a modo de contador la cantidad de fragmentos desbordados del núcleo y la tercera almacena la composición final del núcleo.
+               </p>
+
+               <div class="row">
+                 <div class="col-md-6">
+                     <div class="image center">
+                      <img src="images/method/render.jpg" class="img-responsive">
+                    </div>
+                </div>
+                <div class="col-md-12">
+                  <p class="imagedescL"> Figura 5. Renderizado, en base al valor de profundidad identifica y acumula el cálculo de blending al buffer correspondiente (core  o tail).</p>
+                </div>
+              </div>
+
+              <p class="subtitle">
+                 5. Composición final:
+              </p>
+
+              <p class="lead">
+               La etapa final, y la más sencilla, consiste en utilizar las tres texturas de la pasada anterior y calcular la composición final, usando la fórmula sustractiva como es trabajada en el paper, para esta etapa he usado un renderizado de un quad en pantalla completa con un shader. Sería posible el uso de una función kernel de cuda para esto, pero no representaría mayor diferencia ya que la composición final no requiere procesamiento en tres dimensiones, que permitan el aprovechamiento de más dimensiones en cuda.
+               </p>
+
+
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="adicionales">
+    <div class="container">
+      <div class="row">
+        <div class="center">
+          <div class="col-md-12">
+            <h2>Detalles adicionales</h2>
+            <hr>
+
+
+            <div class="justifyText">
+
+              <p class="subtitle">
+                   Composición del background 
+                </p>
+
+              <p class="lead">
+              Adicionalmente se ha considerado agregar un cubemap para representar el fondo,  al tratarse de una técnica que usa depth testing y la transparencia híbrida usa otras formas de hacer depth testing, agregué una pasada adicional para renderizar el fondo a una textura que será la composición final del background.
+              </p>
+
+              <p class="subtitle">
+                   A-Buffer
+                </p>
+
+                <p class="lead">
+                Antes de implementar la técnica presentada en el paper de cálculo de transparencia híbrida, se ha decidido implementar una técnica conocida en la literatura de cálculo de transparencias independiente del orden, denominada A-Buffer, esto con dos finalidades claras, primero para obtener conceptos previos usados en el cálculo de blending y así poder tener una mejor comprensión posterior de la transparencia híbrida, gracias a que el A-Buffer es una técnica muy simple y usada en el contexto de videojuegos, existe un sin número de documentación muy detallada lo cual me facilitó la implementación y comprensión de la técnica. La segunda finalidad de haber implementado A-Buffer fue la de poder tener una referencia rápida con la que poder comparar visual y estéticamente la técnica de transparencia híbrida, esta referencia también es usada por los autores en el paper. El pipeline de A-Buffer es sencillo, y lo describo en la figura 6.
+
+                </p>
+
+                <div class="row">
+                   <div class="col-md-6 col-md-offset-6">
+                       <div class="image center">
+                        <img src="images/method/abuffer.png" class="img-responsive">
+                      </div>
+                  </div>
+                  <p class="imagedesc"> Figura 6. Simple pipeline de A-Buffer</p>
+                </div>
+
+              </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+    <section id="resultados">
+    <div class="container">
+      <div class="row">
+        <div class="center">
+          <div class="col-md-12">
+            <h2>Resultados</h2>
+            <hr>
+
+
+            <div class="justifyText">
+
+               <div class="row">
+                   <div class="col-md-12 col-md-offset-1">
+                       <div class="center">
+                        <img src="images/results/fps_results.png" class="img-responsive">
+                      </div>
+                  </div>
+                  <p class="imagedesc"> Figura 7. FPS cuandro comparativo</p>
+                </div>
+
+              </div>
+
           </div>
         </div>
 
