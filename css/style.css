@@ -25,6 +25,16 @@ p {
 
 }
 
+.note {
+    display: block;
+    margin: 10px;
+    padding: 5px;
+    background-color: #D8F5D8;
+    color: #444;
+    border-radius: 5px;
+    border: 2px solid #AFDFAF;
+}
+
 .containerDiv {
     position: relative;
     text-align: center;
@@ -37,13 +47,16 @@ p {
     right: 16px;
 }
 
-.image
+.imageMediana
 {
-  max-width: 600px;
+  margin-top: 40px;
+  max-width: 500px;
 }
 
 
-
+.center .img-responsive {
+    margin: 0 auto;
+}
 .subtitle
 {
   font-size: 25px;
@@ -63,11 +76,11 @@ img.right {
 
 .imagedesc
 {
-  margin-top: 0px;
+  padding: 20px;
     font-size: 15px;
     font-weight: bold;
     font-style: italic;
-    text-align: right;
+    text-align: center;
 }
 
 .imagedescL

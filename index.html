@@ -32,7 +32,7 @@
       <div class="container">
         <div class="row">
           <div class="col-sm-12 col-md-6 wow fadeInRight">
-            <iframe width="560" height="315" src="https://www.youtube.com/embed/7kx1XkCAV40" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+           <iframe width="560" height="315" src="https://www.youtube.com/embed/yg7r28dRlqI" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
             <!--
             <img src="images/1.png" class="img-responsive" />
             -->
@@ -154,12 +154,14 @@
 
 
              <div class="row">
-                 <div class="col-md-6 col-md-offset-6">
+                 <div class="col-md-12">
                      <div class="image center">
-                      <img src="images/method/texture_z.png" class="img-responsive">
+                      <img src="images/method/texture_z.png" class="img-responsive imageMediana">
                     </div>
                 </div>
-                <p class="imagedesc"> Figura 1. Representación de textura para almacenar la profundidad y componente alpha del color.</p>
+                <div class="col-md-12">
+                  <p class="imagedesc"> Figura 1. Representación de textura para almacenar la profundidad y componente alpha del color.</p>
+                </div>
               </div>
 
 
@@ -179,13 +181,13 @@
 
 
               <div class="row">
-                 <div class="col-md-6">
+                 <div class="col-md-12">
                      <div class="image center">
-                      <img src="images/method/clear.jpg" class="img-responsive">
+                      <img src="images/method/clear.jpg" class="img-responsive imageMediana">
                     </div>
                 </div>
                 <div class="col-md-12">
-                  <p class="imagedescL"> Figura 2. Limpieza de textura Z, cada thread del cuda kernel asigna un valor infinito al texel relacionado a su propio índice.</p>
+                  <p class="imagedesc"> Figura 2. Limpieza de textura Z, cada thread del cuda kernel asigna un valor infinito al texel relacionado a su propio índice.</p>
                 </div>
               </div>
 
@@ -231,12 +233,14 @@
               </p>
 
                <div class="row">
-                 <div class="col-md-6 col-md-offset-6">
+                 <div class="col-md-12">
                      <div class="image center">
-                      <img src="images/method/process.png" class="img-responsive">
+                      <img src="images/method/process.png" class="img-responsive center imageMediana">
                     </div>
                 </div>
-                <p class="imagedesc"> Figura 4. Cada cuda thread perteneciente a una estructura bidimensional del tamaño de la imagen  final, calcula las K visibilidades del núcleo.</p>
+                <div class="col-md-12">
+                  <p class="imagedesc"> Figura 4. Cada cuda thread perteneciente a una estructura bidimensional del tamaño de la imagen  final, calcula las K visibilidades del núcleo.</p>
+                </div>
               </div>
 
 
@@ -249,13 +253,11 @@
                </p>
 
                <div class="row">
-                 <div class="col-md-6">
-                     <div class="image center">
-                      <img src="images/method/render.jpg" class="img-responsive">
-                    </div>
+                 <div class="col-md-12">
+                      <img src="images/method/render.jpg" class="img-responsive center imageMediana">
                 </div>
                 <div class="col-md-12">
-                  <p class="imagedescL"> Figura 5. Renderizado, en base al valor de profundidad identifica y acumula el cálculo de blending al buffer correspondiente (core  o tail).</p>
+                  <p class="imagedesc"> Figura 5. Renderizado, en base al valor de profundidad identifica y acumula el cálculo de blending al buffer correspondiente (core  o tail).</p>
                 </div>
               </div>
 
@@ -305,12 +307,12 @@
                 </p>
 
                 <div class="row">
-                   <div class="col-md-6 col-md-offset-6">
-                       <div class="image center">
-                        <img src="images/method/abuffer.png" class="img-responsive">
-                      </div>
+                   <div class="col-md-12">
+                        <img src="images/method/abuffer.png" class="img-responsive center imageMediana">
                   </div>
-                  <p class="imagedesc"> Figura 6. Simple pipeline de A-Buffer</p>
+                  <div class="col-md-12">
+                    <p class="imagedesc">Figura 6. Simple pipeline de A-Buffer</p>
+                  </div>
                 </div>
 
               </div>
@@ -334,15 +336,83 @@
             <div class="justifyText">
 
                <div class="row">
-                   <div class="col-md-12 col-md-offset-1">
-                       <div class="center">
-                        <img src="images/results/fps_results.png" class="img-responsive">
-                      </div>
+                   <div class="col-md-12">
+                        <img src="images/results/comparative.png" class="img-responsive center">
                   </div>
-                  <p class="imagedesc"> Figura 7. FPS cuandro comparativo</p>
+                  <div class="col-md-12">
+                    <p class="imagedesc"> Figura 7. FPS cuadro comparativo</p>
+                  </div>
+                  
                 </div>
 
+                <br>
+
+                <div class="row">
+                   <div class="col-md-12">
+                        <img src="images/results/instance1_comp.png" class="img-responsive center">
+                  </div>
+                  <p class="imagedesc"> Figura 8. Comparación entre distintas técnicas y tamaño del slots del buffer en profundidad para 22 instancias de stanford dragon alineadas</p>
+                </div>
+
+                 <div class="row">
+                   <div class="col-md-12">
+                        <img src="images/results/results_hair.png" class="img-responsive center">
+                  </div>
+                  <p class="imagedesc"> Figura 9. Comparación entre distintas técnicas y tamaño del slots del buffer en profundidad para una instancia de Dark hair</p>
+                </div>
+
+                <div class="row">
+                   <div class="col-md-12">
+                        <img src="images/results/results_sky.png" class="img-responsive center">
+                  </div>
+                  <p class="imagedesc"> Figura 10. Comparación entre HT-CUDA y Abuffer, para una instancia de stanford dragon, con un tamaño de slot de 64</p>
+                </div>
+
+
               </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+   <section id="adicionales">
+    <div class="container">
+      <div class="row">
+        <div class="center">
+          <div class="col-md-12">
+            <h2>Miscelánea</h2>
+            <hr>
+
+
+            <div class="justifyText">
+
+             
+             
+
+              <div class="col-md-6">
+               <p class="subtitle">
+                    Informe de implementación 1
+                </p>
+
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/plhXM1drkBQ" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+              </div>
+
+              <div class="col-md-6">
+               <p class="subtitle">
+                    Informe de implementación 2
+                </p>
+
+               <iframe width="560" height="315" src="https://www.youtube.com/embed/7kx1XkCAV40" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+              </div>
+
+              <br>
+              <br>
+
+               </div>
 
           </div>
         </div>
